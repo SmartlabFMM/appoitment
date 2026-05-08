@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue Liste -->
+    <record id="view_medical_speciality_list" model="ir.ui.view">
+        <field name="name">medical.speciality.list</field>
+        <field name="model">medical.speciality</field>
+        <field name="arch" type="xml">
+            <list string="Specialites Medicales" decoration-muted="not active">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="average_duration"/>
+                <field name="doctor_count"/>
+                <field name="appointment_count"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire -->
+    <record id="view_medical_speciality_form" model="ir.ui.view">
+        <field name="name">medical.speciality.form</field>
+        <field name="model">medical.speciality</field>
+        <field name="arch" type="xml">
+            <form string="Specialite Medicale">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_doctors" type="object"
+                                class="oe_stat_button" icon="fa-user-md"
+                                invisible="doctor_count == 0">
+                            <field name="doctor_count" widget="statinfo" string="Medecins"/>
+                        </button>
+                        <button name="action_view_appointments" type="object"
+                                class="oe_stat_button" icon="fa-calendar"
+                                invisible="appointment_count == 0">
+                            <field name="appointment_count" widget="statinfo" string="RDV"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archive" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom de la specialite..." required="True"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="average_duration"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <separator string="Description"/>
+                    <field name="description" placeholder="Description de la specialite..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche -->
+    <record id="view_medical_speciality_search" model="ir.ui.view">
+        <field name="name">medical.speciality.search</field>
+        <field name="model">medical.speciality</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher une Specialite">
+                <field name="code" string="Code"/>
+                <field name="name" string="Nom"/>
+                <filter string="Actif" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archive" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_medical_speciality" model="ir.actions.act_window">
+        <field name="name">Specialites Medicales</field>
+        <field name="res_model">medical.speciality</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_medical_speciality_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune specialite medicale trouvee.
+            </p>
+            <p>Creez des specialites medicales pour organiser les medecins.</p>
+        </field>
+    </record>
+
+</odoo>

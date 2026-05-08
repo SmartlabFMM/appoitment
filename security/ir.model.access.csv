@@ -1,0 +1,26 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_speciality_admin,Spécialité Admin,model_medical_speciality,clinic_appointment.group_clinic_admin,1,1,1,1
+access_speciality_secretary,Spécialité Secrétaire,model_medical_speciality,clinic_appointment.group_clinic_secretary,1,0,0,0
+access_speciality_doctor,Spécialité Médecin,model_medical_speciality,clinic_appointment.group_clinic_doctor,1,0,0,0
+access_speciality_patient,Spécialité Patient,model_medical_speciality,clinic_appointment.group_clinic_patient,1,0,0,0
+access_doctor_admin,Médecin Admin,model_medical_doctor,clinic_appointment.group_clinic_admin,1,1,1,1
+access_doctor_secretary,Médecin Secrétaire,model_medical_doctor,clinic_appointment.group_clinic_secretary,1,1,0,0
+access_doctor_doctor,Médecin Médecin,model_medical_doctor,clinic_appointment.group_clinic_doctor,1,0,0,0
+access_doctor_patient,Médecin Patient,model_medical_doctor,clinic_appointment.group_clinic_patient,1,0,0,0
+access_patient_admin,Patient Admin,model_medical_patient,clinic_appointment.group_clinic_admin,1,1,1,1
+access_patient_secretary,Patient Secrétaire,model_medical_patient,clinic_appointment.group_clinic_secretary,1,1,1,0
+access_patient_doctor,Patient Médecin,model_medical_patient,clinic_appointment.group_clinic_doctor,1,0,0,0
+access_patient_patient,Patient Patient,model_medical_patient,clinic_appointment.group_clinic_patient,1,1,0,0
+access_appointment_admin,RDV Admin,model_medical_appointment,clinic_appointment.group_clinic_admin,1,1,1,1
+access_appointment_secretary,RDV Secrétaire,model_medical_appointment,clinic_appointment.group_clinic_secretary,1,1,1,1
+access_appointment_doctor,RDV Médecin,model_medical_appointment,clinic_appointment.group_clinic_doctor,1,1,0,0
+access_appointment_patient,RDV Patient,model_medical_appointment,clinic_appointment.group_clinic_patient,1,1,1,0
+access_schedule_admin,Planning Admin,model_medical_schedule,clinic_appointment.group_clinic_admin,1,1,1,1
+access_schedule_secretary,Planning Secrétaire,model_medical_schedule,clinic_appointment.group_clinic_secretary,1,1,1,1
+access_schedule_doctor,Planning Médecin,model_medical_schedule,clinic_appointment.group_clinic_doctor,1,0,0,0
+access_schedule_patient,Planning Patient,model_medical_schedule,clinic_appointment.group_clinic_patient,1,0,0,0
+access_wizard_admin,Wizard Admin,model_appointment_wizard,clinic_appointment.group_clinic_admin,1,1,1,1
+access_wizard_secretary,Wizard Secrétaire,model_appointment_wizard,clinic_appointment.group_clinic_secretary,1,1,1,1
+access_wizard_patient,Wizard Patient,model_appointment_wizard,clinic_appointment.group_clinic_patient,1,1,1,1
+access_bulk_cancel_admin,Annulation Admin,model_bulk_cancel_wizard,clinic_appointment.group_clinic_admin,1,1,1,1
+access_bulk_cancel_secretary,Annulation Secrétaire,model_bulk_cancel_wizard,clinic_appointment.group_clinic_secretary,1,1,1,1

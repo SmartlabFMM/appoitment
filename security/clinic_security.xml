@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Groupe Admin -->
+        <record id="group_clinic_admin" model="res.groups">
+            <field name="name">Clinic / Administrateur</field>
+        </record>
+
+        <!-- Groupe Secrétaire -->
+        <record id="group_clinic_secretary" model="res.groups">
+            <field name="name">Clinic / Secrétaire</field>
+        </record>
+
+        <!-- Groupe Médecin -->
+        <record id="group_clinic_doctor" model="res.groups">
+            <field name="name">Clinic / Médecin</field>
+        </record>
+
+        <!-- Groupe Patient -->
+        <record id="group_clinic_patient" model="res.groups">
+            <field name="name">Clinic / Patient</field>
+        </record>
+
+        <!-- Médecin : voir seulement ses propres rendez-vous -->
+        <record id="rule_appointment_doctor" model="ir.rule">
+            <field name="name">Médecin : Ses Rendez-Vous Uniquement</field>
+            <field name="model_id" ref="model_medical_appointment"/>
+            <field name="groups" eval="[(4, ref('group_clinic_doctor'))]"/>
+            <field name="domain_force">[('doctor_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Patient : voir seulement ses propres rendez-vous -->
+        <record id="rule_appointment_patient" model="ir.rule">
+            <field name="name">Patient : Ses Rendez-Vous Uniquement</field>
+            <field name="model_id" ref="model_medical_appointment"/>
+            <field name="groups" eval="[(4, ref('group_clinic_patient'))]"/>
+            <field name="domain_force">[('patient_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Médecin : voir son profil uniquement -->
+        <record id="rule_doctor_self" model="ir.rule">
+            <field name="name">Médecin : Son Profil Uniquement</field>
+            <field name="model_id" ref="model_medical_doctor"/>
+            <field name="groups" eval="[(4, ref('group_clinic_doctor'))]"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Patient : voir son propre profil -->
+        <record id="rule_patient_self" model="ir.rule">
+            <field name="name">Patient : Son Profil Uniquement</field>
+            <field name="model_id" ref="model_medical_patient"/>
+            <field name="groups" eval="[(4, ref('group_clinic_patient'))]"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

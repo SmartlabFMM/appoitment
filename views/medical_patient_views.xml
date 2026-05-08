@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================
+         PATIENTS - VUES
+    ============================================================ -->
+
+    <!-- Vue Liste -->
+    <record id="view_medical_patient_list" model="ir.ui.view">
+        <field name="name">medical.patient.list</field>
+        <field name="model">medical.patient</field>
+        <field name="arch" type="xml">
+            <list string="Patients" decoration-muted="not active">
+                <field name="ref"/>
+                <field name="name"/>
+                <field name="gender"/>
+                <field name="age" string="Âge"/>
+                <field name="phone"/>
+                <field name="insurance_type"/>
+                <field name="last_appointment_date"/>
+                <field name="appointment_count" string="RDV"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire -->
+    <record id="view_medical_patient_form" model="ir.ui.view">
+        <field name="name">medical.patient.form</field>
+        <field name="model">medical.patient</field>
+        <field name="arch" type="xml">
+            <form string="Dossier Patient">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_appointments" type="object"
+                                class="oe_stat_button" icon="fa-calendar">
+                            <field name="appointment_count" widget="statinfo" string="Rendez-Vous"/>
+                        </button>
+                        <button name="action_new_appointment" type="object"
+                                class="oe_stat_button" icon="fa-plus-circle">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">Nouveau RDV</span>
+                            </div>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archivé" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom complet du patient..." required="True"/>
+                        </h1>
+                        <div>
+                            <field name="ref" readonly="True" class="text-muted"/>
+                        </div>
+                    </div>
+                    <group>
+                        <group string="Informations Personnelles">
+                            <field name="gender"/>
+                            <field name="birth_date"/>
+                            <field name="age" readonly="True"/>
+                            <field name="blood_group"/>
+                        </group>
+                        <group string="Contact">
+                            <field name="phone" required="True"/>
+                            <field name="email"/>
+                            <field name="governorate"/>
+                            <field name="city"/>
+                            <field name="address"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Assurance">
+                            <field name="insurance_type"/>
+                            <field name="insurance_number"
+                                   invisible="insurance_type == 'none'"/>
+                        </group>
+
+                    </group>
+                    <notebook>
+                        <page string="Informations Médicales" name="medical">
+                            <group>
+                                <group string="Antécédents">
+                                    <field name="allergies" placeholder="Allergies connues..."/>
+                                    <field name="chronic_diseases" placeholder="Maladies chroniques..."/>
+                                    <field name="current_medications" placeholder="Médicaments en cours..."/>
+                                    <field name="medical_history" placeholder="Antécédents médicaux..."/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Rendez-Vous" name="appointments">
+                            <field name="appointment_ids" readonly="True">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="doctor_id"/>
+                                    <field name="speciality_id"/>
+                                    <field name="appointment_date"/>
+                                    <field name="appointment_time_display" string="Heure"/>
+                                    <field name="reason"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'done'"
+                                           decoration-warning="state in ('confirmed','waiting')"
+                                           decoration-danger="state == 'cancelled'"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Compte Utilisateur" name="account">
+                            <group>
+                                <field name="user_id"/>
+                                <field name="active"/>
+                            </group>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes complémentaires..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche -->
+    <record id="view_medical_patient_search" model="ir.ui.view">
+        <field name="name">medical.patient.search</field>
+        <field name="model">medical.patient</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un Patient">
+                <field name="name" string="Nom"/>
+                <field name="ref" string="N Dossier"/>
+                <field name="phone" string="Telephone"/>
+                <filter string="Actif" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archive" name="inactive" domain="[('active', '=', False)]"/>
+                <filter string="Grouper par Gouvernorat" name="group_governorate" context="{'group_by': 'governorate'}"/>
+                <filter string="Grouper par Assurance" name="group_insurance" context="{'group_by': 'insurance_type'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_medical_patient" model="ir.actions.act_window">
+        <field name="name">Patients</field>
+        <field name="res_model">medical.patient</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_medical_patient_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun patient enregistré.
+            </p>
+            <p>Enregistrez les patients de votre établissement.</p>
+        </field>
+    </record>
+
+</odoo>

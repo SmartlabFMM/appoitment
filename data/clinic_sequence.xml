@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Séquence Rendez-Vous -->
+        <record id="seq_medical_appointment" model="ir.sequence">
+            <field name="name">Rendez-Vous Médical</field>
+            <field name="code">medical.appointment</field>
+            <field name="prefix">RDV/%(year)s/%(month)s/</field>
+            <field name="padding">4</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+        </record>
+
+        <!-- Séquence Médecin -->
+        <record id="seq_medical_doctor" model="ir.sequence">
+            <field name="name">Médecin</field>
+            <field name="code">medical.doctor</field>
+            <field name="prefix">MED/</field>
+            <field name="padding">4</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+        </record>
+
+        <!-- Séquence Patient -->
+        <record id="seq_medical_patient" model="ir.sequence">
+            <field name="name">Patient</field>
+            <field name="code">medical.patient</field>
+            <field name="prefix">PAT/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+        </record>
+    </data>
+</odoo>

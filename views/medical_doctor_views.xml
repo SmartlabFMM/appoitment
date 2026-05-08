@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue Liste -->
+    <record id="view_medical_doctor_list" model="ir.ui.view">
+        <field name="name">medical.doctor.list</field>
+        <field name="model">medical.doctor</field>
+        <field name="arch" type="xml">
+            <list string="Médecins" decoration-muted="not active">
+                <field name="ref"/>
+                <field name="display_name_full" string="Nom"/>
+                <field name="speciality_id"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="today_appointment_count" string="RDV Aujourd'hui"/>
+                <field name="appointment_count" string="Total RDV"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire -->
+    <record id="view_medical_doctor_form" model="ir.ui.view">
+        <field name="name">medical.doctor.form</field>
+        <field name="model">medical.doctor</field>
+        <field name="arch" type="xml">
+            <form string="Fiche Médecin">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_appointments" type="object"
+                                class="oe_stat_button" icon="fa-calendar">
+                            <field name="appointment_count" widget="statinfo" string="Total RDV"/>
+                        </button>
+                        <button name="action_view_schedule" type="object"
+                                class="oe_stat_button" icon="fa-clock-o">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">Planning</span>
+                            </div>
+                        </button>
+                        <!-- Bouton : créer manuellement le compte si la création auto a échoué -->
+                        <button name="action_create_user" type="object"
+                                class="oe_stat_button" icon="fa-user-plus"
+                                invisible="user_id != False"
+                                groups="clinic_appointment.group_clinic_admin">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">Créer Compte</span>
+                                <span class="o_stat_text">Utilisateur</span>
+                            </div>
+                        </button>
+                        <!-- Indicateur : compte déjà lié -->
+                        <button type="object" name="action_view_appointments"
+                                class="oe_stat_button" icon="fa-user-check"
+                                invisible="user_id == False">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value text-success">Compte Actif</span>
+                                <span class="o_stat_text">
+                                    <field name="user_id" readonly="True" nolabel="True"/>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archivé" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <div class="o_field_widget">
+                            <field name="title" class="me-2"/>
+                            <field name="name" placeholder="Nom complet du médecin..." required="True"/>
+                        </div>
+                    </div>
+                    <group>
+                        <group string="Informations Professionnelles">
+                            <field name="speciality_id" required="True"/>
+                            <field name="license_number"/>
+                            <field name="experience_years"/>
+                            <field name="consultation_duration" readonly="True"/>
+                            <field name="consultation_fee"/>
+                        </group>
+                        <group string="Informations Personnelles">
+                            <field name="gender"/>
+                            <field name="birth_date"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Compte et Acces">
+                            <field name="user_id"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Localisation">
+                            <field name="address" placeholder="Adresse..."/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Planning Hebdomadaire" name="schedule">
+                            <field name="schedule_ids" context="{'default_doctor_id': id}">
+                                <list editable="bottom">
+                                    <field name="day_of_week"/>
+                                    <field name="start_time" widget="float_time"/>
+                                    <field name="end_time" widget="float_time"/>
+                                    <field name="max_appointments"/>
+                                    <field name="active"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Rendez-Vous" name="appointments">
+                            <field name="appointment_ids" readonly="True">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="patient_id"/>
+                                    <field name="appointment_date"/>
+                                    <field name="appointment_time_display" string="Heure"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'done'"
+                                           decoration-warning="state in ('confirmed','waiting')"
+                                           decoration-danger="state == 'cancelled'"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes internes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche -->
+    <record id="view_medical_doctor_search" model="ir.ui.view">
+        <field name="name">medical.doctor.search</field>
+        <field name="model">medical.doctor</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un Medecin">
+                <field name="name" string="Nom"/>
+                <field name="speciality_id" string="Specialite"/>
+                <field name="ref" string="Reference"/>
+                <filter string="Actif" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archive" name="inactive" domain="[('active', '=', False)]"/>
+                <filter string="Sans Compte" name="no_user" domain="[('user_id', '=', False)]"/>
+                <filter string="Grouper par Specialite" name="group_speciality" context="{'group_by': 'speciality_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action principale -->
+    <record id="action_medical_doctor" model="ir.actions.act_window">
+        <field name="name">Medecins</field>
+        <field name="res_model">medical.doctor</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_medical_doctor_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun medecin enregistre.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action pour le medecin connecte -->
+    <record id="action_medical_doctor_own" model="ir.actions.act_window">
+        <field name="name">Mon Profil</field>
+        <field name="res_model">medical.doctor</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('user_id', '=', uid)]</field>
+    </record>
+
+</odoo>

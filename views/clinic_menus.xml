@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu Racine -->
+    <menuitem id="menu_clinic_root"
+              name="MedRdv"
+              sequence="10"/>
+
+    <!-- RENDEZ-VOUS -->
+    <menuitem id="menu_appointments"
+              name="Rendez-Vous"
+              parent="menu_clinic_root"
+              sequence="10"/>
+
+    <menuitem id="menu_appointments_all"
+              name="Tous les Rendez-Vous"
+              parent="menu_appointments"
+              action="action_medical_appointment"
+              sequence="1"
+              groups="clinic_appointment.group_clinic_admin,clinic_appointment.group_clinic_secretary"/>
+
+    <menuitem id="menu_appointments_today"
+              name="Rendez-Vous du Jour"
+              parent="menu_appointments"
+              action="action_appointment_today"
+              sequence="2"
+              groups="clinic_appointment.group_clinic_admin,clinic_appointment.group_clinic_secretary"/>
+
+    <menuitem id="menu_appointments_my_doctor"
+              name="Mes Rendez-Vous"
+              parent="menu_appointments"
+              action="action_appointment_doctor_own"
+              sequence="3"
+              groups="clinic_appointment.group_clinic_doctor"/>
+
+    <menuitem id="menu_appointments_my_patient"
+              name="Mes Rendez-Vous"
+              parent="menu_appointments"
+              action="action_appointment_patient_own"
+              sequence="4"
+              groups="clinic_appointment.group_clinic_patient"/>
+
+    <!-- MEDECINS -->
+    <menuitem id="menu_doctors"
+              name="Medecins"
+              parent="menu_clinic_root"
+              sequence="20"/>
+
+    <menuitem id="menu_doctors_list"
+              name="Liste des Medecins"
+              parent="menu_doctors"
+              action="action_medical_doctor"
+              sequence="1"
+              groups="clinic_appointment.group_clinic_admin,clinic_appointment.group_clinic_secretary"/>
+
+    <menuitem id="menu_doctors_schedule"
+              name="Plannings des Medecins"
+              parent="menu_doctors"
+              action="action_medical_schedule"
+              sequence="2"
+              groups="clinic_appointment.group_clinic_admin,clinic_appointment.group_clinic_secretary"/>
+
+    <menuitem id="menu_doctor_profile"
+              name="Mon Profil"
+              parent="menu_doctors"
+              action="action_medical_doctor_own"
+              sequence="1"
+              groups="clinic_appointment.group_clinic_doctor"/>
+
+    <menuitem id="menu_doctor_schedule_own"
+              name="Mon Planning"
+              parent="menu_doctors"
+              action="action_schedule_doctor_own"
+              sequence="2"
+              groups="clinic_appointment.group_clinic_doctor"/>
+
+    <!-- PATIENTS -->
+    <menuitem id="menu_patients"
+              name="Patients"
+              parent="menu_clinic_root"
+              sequence="30"/>
+
+    <menuitem id="menu_patients_list"
+              name="Dossiers Patients"
+              parent="menu_patients"
+              action="action_medical_patient"
+              sequence="1"
+              groups="clinic_appointment.group_clinic_admin,clinic_appointment.group_clinic_secretary,clinic_appointment.group_clinic_doctor"/>
+
+    <!-- ADMINISTRATION -->
+    <menuitem id="menu_admin"
+              name="Administration"
+              parent="menu_clinic_root"
+              sequence="90"
+              groups="clinic_appointment.group_clinic_admin"/>
+
+    <menuitem id="menu_admin_speciality"
+              name="Specialites Medicales"
+              parent="menu_admin"
+              action="action_medical_speciality"
+              sequence="1"/>
+
+    <menuitem id="menu_admin_doctors"
+              name="Gestion des Medecins"
+              parent="menu_admin"
+              action="action_medical_doctor"
+              sequence="2"/>
+
+    <menuitem id="menu_admin_patients"
+              name="Gestion des Patients"
+              parent="menu_admin"
+              action="action_medical_patient"
+              sequence="3"/>
+
+    <menuitem id="menu_admin_schedules"
+              name="Gestion des Plannings"
+              parent="menu_admin"
+              action="action_medical_schedule"
+              sequence="4"/>
+
+</odoo>

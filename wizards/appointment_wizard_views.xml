@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================
+         WIZARD - PRISE DE RENDEZ-VOUS
+    ============================================================ -->
+
+    <record id="view_appointment_wizard_form" model="ir.ui.view">
+        <field name="name">appointment.wizard.form</field>
+        <field name="model">appointment.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Prise de Rendez-Vous Rapide">
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        <i class="fa fa-info-circle me-2"/>
+                        Remplissez les informations ci-dessous pour prendre un rendez-vous.
+                        Les créneaux disponibles dépendent du planning du médecin sélectionné.
+                    </div>
+
+                    <separator string="1. Patient"/>
+                    <group>
+                        <field name="patient_id" required="True"
+                               options="{'no_create': False, 'no_quick_create': False}"/>
+                    </group>
+
+                    <separator string="2. Spécialité et Médecin"/>
+                    <group>
+                        <group>
+                            <field name="speciality_id" required="True"/>
+                            <field name="doctor_id" required="True"/>
+                            <field name="doctor_info" readonly="True" invisible="not doctor_id"/>
+                        </group>
+                        <group>
+                            <field name="appointment_date" required="True"/>
+                            <field name="available_slots_info" readonly="True"
+                                   invisible="not doctor_id or not appointment_date"/>
+                        </group>
+                    </group>
+
+                    <separator string="3. Créneau Horaire"/>
+                    <group>
+                        <group>
+                            <field name="appointment_time" widget="float_time" required="True"/>
+                            <field name="appointment_time_display" readonly="True"/>
+                        </group>
+                        <group>
+                            <field name="appointment_type"/>
+                            <field name="priority" widget="priority"/>
+                        </group>
+                    </group>
+
+                    <separator string="4. Motif de la Consultation"/>
+                    <group>
+                        <field name="reason" required="True" nolabel="True"
+                               placeholder="Décrivez le motif de la consultation..."/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm_appointment" string="Confirmer le Rendez-Vous"
+                            type="object" class="btn-primary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action Wizard -->
+    <record id="action_appointment_wizard" model="ir.actions.act_window">
+        <field name="name">Prendre un Rendez-Vous</field>
+        <field name="res_model">appointment.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ============================================================
+         WIZARD - ANNULATION EN MASSE
+    ============================================================ -->
+
+    <record id="view_bulk_cancel_wizard_form" model="ir.ui.view">
+        <field name="name">bulk.cancel.wizard.form</field>
+        <field name="model">bulk.cancel.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Annulation en Masse">
+                <sheet>
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fa fa-exclamation-triangle me-2"/>
+                        Vous allez annuler <strong><field name="count" readonly="True"/></strong> rendez-vous.
+                        Cette action est irréversible.
+                    </div>
+                    <group>
+                        <field name="reason" required="True"
+                               placeholder="Motif de l'annulation (ex: médecin absent, maintenance)..."/>
+                    </group>
+                    <group>
+                        <field name="appointment_ids">
+                            <list>
+                                <field name="name"/>
+                                <field name="patient_id"/>
+                                <field name="doctor_id"/>
+                                <field name="appointment_date"/>
+                                <field name="appointment_time_display" string="Heure"/>
+                                <field name="state"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_bulk_cancel" string="Confirmer l'Annulation"
+                            type="object" class="btn-danger"/>
+                    <button string="Retour" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_bulk_cancel_wizard" model="ir.actions.act_window">
+        <field name="name">Annuler les Rendez-Vous Sélectionnés</field>
+        <field name="res_model">bulk.cancel.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_medical_appointment"/>
+        <field name="binding_type">action</field>
+    </record>
+
+</odoo>

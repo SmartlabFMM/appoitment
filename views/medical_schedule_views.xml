@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================
+         PLANNING - VUES
+    ============================================================ -->
+
+    <!-- Vue Liste -->
+    <record id="view_medical_schedule_list" model="ir.ui.view">
+        <field name="name">medical.schedule.list</field>
+        <field name="model">medical.schedule</field>
+        <field name="arch" type="xml">
+            <list string="Plannings" editable="top"
+                  decoration-muted="not active">
+                <field name="doctor_id"/>
+                <field name="speciality_id" readonly="True"/>
+                <field name="day_of_week"/>
+                <field name="start_time" widget="float_time"/>
+                <field name="end_time" widget="float_time"/>
+                <field name="max_appointments" readonly="True"/>
+                <field name="active"/>
+                <field name="notes"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire -->
+    <record id="view_medical_schedule_form" model="ir.ui.view">
+        <field name="name">medical.schedule.form</field>
+        <field name="model">medical.schedule</field>
+        <field name="arch" type="xml">
+            <form string="Planning Médecin">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="True"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Médecin">
+                            <field name="doctor_id" required="True"/>
+                            <field name="speciality_id" readonly="True"/>
+                        </group>
+                        <group string="Horaires">
+                            <field name="day_of_week" required="True"/>
+                            <field name="start_time" widget="float_time" required="True"/>
+                            <field name="end_time" widget="float_time" required="True"/>
+                            <field name="max_appointments" readonly="True"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="active"/>
+                        <field name="notes" placeholder="Notes sur ce créneau..."/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche -->
+    <record id="view_medical_schedule_search" model="ir.ui.view">
+        <field name="name">medical.schedule.search</field>
+        <field name="model">medical.schedule</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un Planning">
+                <field name="doctor_id" string="Medecin"/>
+                <field name="speciality_id" string="Specialite"/>
+                <filter string="Actif" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Lundi" name="monday" domain="[('day_of_week', '=', '0')]"/>
+                <filter string="Mardi" name="tuesday" domain="[('day_of_week', '=', '1')]"/>
+                <filter string="Mercredi" name="wednesday" domain="[('day_of_week', '=', '2')]"/>
+                <filter string="Jeudi" name="thursday" domain="[('day_of_week', '=', '3')]"/>
+                <filter string="Vendredi" name="friday" domain="[('day_of_week', '=', '4')]"/>
+                <filter string="Samedi" name="saturday" domain="[('day_of_week', '=', '5')]"/>
+                <filter string="Grouper par Medecin" name="group_doctor" context="{'group_by': 'doctor_id'}"/>
+                <filter string="Grouper par Jour" name="group_day" context="{'group_by': 'day_of_week'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_medical_schedule" model="ir.actions.act_window">
+        <field name="name">Plannings des Médecins</field>
+        <field name="res_model">medical.schedule</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_medical_schedule_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun planning défini.
+            </p>
+            <p>Définissez les horaires de disponibilité des médecins.</p>
+        </field>
+    </record>
+
+    <!-- Action : Mon planning (médecin) -->
+    <record id="action_schedule_doctor_own" model="ir.actions.act_window">
+        <field name="name">Mon Planning</field>
+        <field name="res_model">medical.schedule</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('doctor_id.user_id', '=', uid)]</field>
+    </record>
+
+</odoo>

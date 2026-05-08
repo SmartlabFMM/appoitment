@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue Liste -->
+    <record id="view_medical_appointment_list" model="ir.ui.view">
+        <field name="name">medical.appointment.list</field>
+        <field name="model">medical.appointment</field>
+        <field name="arch" type="xml">
+            <list string="Rendez-Vous"
+                  decoration-success="state == 'done'"
+                  decoration-warning="state in ('confirmed', 'waiting')"
+                  decoration-danger="state in ('cancelled', 'no_show')"
+                  decoration-info="state == 'in_progress'">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="speciality_id"/>
+                <field name="appointment_date"/>
+                <field name="appointment_time_display" string="Heure"/>
+                <field name="duration" string="Duree (min)"/>
+                <field name="appointment_type"/>
+                <field name="priority" widget="priority"/>
+                <field name="reason"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-warning="state in ('confirmed', 'waiting')"
+                       decoration-danger="state == 'cancelled'"
+                       decoration-info="state == 'in_progress'"
+                       decoration-muted="state == 'no_show'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire -->
+    <record id="view_medical_appointment_form" model="ir.ui.view">
+        <field name="name">medical.appointment.form</field>
+        <field name="model">medical.appointment</field>
+        <field name="arch" type="xml">
+            <form string="Rendez-Vous Medical">
+                <header>
+                    <button name="action_confirm" string="Confirmer" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_waiting" string="En Attente" type="object"
+                            invisible="state != 'confirmed'"/>
+<!--                    <button name="action_in_progress" string="Demarrer Consultation" type="object"-->
+<!--                            class="btn-success" invisible="state not in ('confirmed', 'waiting')"/>-->
+                    <button name="action_done" string="Terminer" type="object"
+                            class="btn-success" invisible="state != 'in_progress'"/>
+                    <button name="action_no_show" string="Absent" type="object"
+                            class="btn-warning" invisible="state not in ('confirmed', 'waiting')"/>
+                    <button name="action_cancel" string="Annuler" type="object"
+                            class="btn-danger"
+                            confirm="Etes-vous sur de vouloir annuler ce rendez-vous?"
+                            invisible="state in ('done', 'cancelled')"/>
+                    <button name="action_reset_draft" string="Remettre en Brouillon" type="object"
+                            invisible="state not in ('cancelled', 'no_show')"/>
+                    <button name="action_print_appointment" string="Imprimer" type="object"
+                            icon="fa-print"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,waiting,in_progress,done"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Urgent" bg_color="text-bg-danger"
+                            invisible="not is_urgent"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="True"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Informations du Rendez-Vous">
+                            <field name="patient_id" required="True"
+                                   options="{'no_create': True, 'no_quick_create': True}"/>
+                            <field name="doctor_id" required="True"
+                                   options="{'no_create': True, 'no_quick_create': True}"/>
+                            <field name="speciality_id" readonly="True"/>
+                            <field name="appointment_type"/>
+                            <field name="priority" widget="priority"/>
+                        </group>
+                        <group string="Date et Heure">
+                            <field name="appointment_date" required="True" options="{'min_date': 'today'}"/>
+                            <field name="appointment_time" widget="float_time" required="True"/>
+                            <field name="duration" readonly="True"/>
+                            <field name="appointment_time_display" readonly="True" string="Heure Affichee"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Informations Patient">
+                            <field name="patient_phone" readonly="True"/>
+                            <field name="patient_age" readonly="True" string="Age"/>
+                            <field name="patient_blood_group" readonly="True" string="Groupe Sanguin"/>
+                        </group>
+                    </group>
+                    <separator string="Motif et Symptomes"/>
+                    <group>
+                        <field name="reason" required="True" placeholder="Motif de la consultation..."/>
+                        <field name="symptoms" placeholder="Symptomes decrits par le patient..."/>
+                    </group>
+                    <notebook>
+                        <page string="Consultation Medicale" name="medical"
+                              invisible="state not in ('in_progress', 'done')">
+                            <separator string="Diagnostic"/>
+                            <field name="diagnosis" placeholder="Diagnostic du medecin..."/>
+                            <separator string="Ordonnance / Prescription"/>
+                            <field name="prescription" placeholder="Ordonnance et prescriptions..."/>
+                            <separator string="Notes du Medecin"/>
+                            <field name="doctor_notes" placeholder="Notes privees du medecin..."/>
+                        </page>
+                        <page string="Notes Secretariat" name="secretary_notes">
+                            <field name="secretary_notes" placeholder="Notes de la secretaire..."/>
+                        </page>
+                        <page string="Suivi" name="tracking">
+                            <group>
+                                <field name="confirmation_sent" readonly="True"/>
+                                <field name="reminder_sent" readonly="True"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Calendrier -->
+    <record id="view_medical_appointment_calendar" model="ir.ui.view">
+        <field name="name">medical.appointment.calendar</field>
+        <field name="model">medical.appointment</field>
+        <field name="arch" type="xml">
+            <calendar string="Rendez-Vous"
+                      date_start="appointment_datetime"
+                      date_stop="end_datetime"
+                      color="color"
+                      mode="week">
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Vue Recherche -->
+    <record id="view_medical_appointment_search" model="ir.ui.view">
+        <field name="name">medical.appointment.search</field>
+        <field name="model">medical.appointment</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un Rendez-Vous">
+                <field name="name" string="Reference"/>
+                <field name="patient_id" string="Patient"/>
+                <field name="doctor_id" string="Medecin"/>
+                <field name="speciality_id" string="Specialite"/>
+                <separator/>
+                <filter string="Aujourd'hui" name="today"
+                        domain="[('appointment_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Ce Mois" name="this_month"
+                        domain="[('appointment_date', '&gt;=', context_today().strftime('%Y-%m-01'))]"/>
+                <separator/>
+                <filter string="Brouillon" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Confirme" name="confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter string="En Attente" name="waiting" domain="[('state', '=', 'waiting')]"/>
+                <filter string="En Cours" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Termine" name="done" domain="[('state', '=', 'done')]"/>
+                <filter string="Annule" name="cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <filter string="Absent" name="no_show" domain="[('state', '=', 'no_show')]"/>
+                <separator/>
+                <filter string="Urgent" name="urgent" domain="[('priority', 'in', ('1','2'))]"/>
+                <separator/>
+                <filter string="Grouper par Medecin" name="group_doctor" context="{'group_by': 'doctor_id'}"/>
+                <filter string="Grouper par Specialite" name="group_speciality" context="{'group_by': 'speciality_id'}"/>
+                <filter string="Grouper par Etat" name="group_state" context="{'group_by': 'state'}"/>
+                <filter string="Grouper par Date" name="group_date" context="{'group_by': 'appointment_date:day'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action principale -->
+    <record id="action_medical_appointment" model="ir.actions.act_window">
+        <field name="name">Tous les Rendez-Vous</field>
+        <field name="res_model">medical.appointment</field>
+        <field name="view_mode">list,form,calendar</field>
+        <field name="search_view_id" ref="view_medical_appointment_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun rendez-vous trouve.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action : RDV du jour -->
+    <record id="action_appointment_today" model="ir.actions.act_window">
+        <field name="name">Rendez-Vous du Jour</field>
+        <field name="res_model">medical.appointment</field>
+        <field name="view_mode">list,form,calendar</field>
+        <field name="domain">[('appointment_date', '=', context_today())]</field>
+    </record>
+
+    <!-- Action : RDV du medecin connecte -->
+    <record id="action_appointment_doctor_own" model="ir.actions.act_window">
+        <field name="name">Mes Rendez-Vous</field>
+        <field name="res_model">medical.appointment</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="domain">[('doctor_id.user_id', '=', uid)]</field>
+    </record>
+
+    <!-- Action : Mes RDV patient -->
+    <record id="action_appointment_patient_own" model="ir.actions.act_window">
+        <field name="name">Mes Rendez-Vous</field>
+        <field name="res_model">medical.appointment</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('patient_id.user_id', '=', uid)]</field>
+    </record>
+
+</odoo>

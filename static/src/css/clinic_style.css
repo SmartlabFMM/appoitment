@@ -1,0 +1,164 @@
+/* ===================================================
+   CLINIC APPOINTMENT - STYLES BACKEND ODOO
+   =================================================== */
+
+:root {
+    --clinic-primary: #1a5276;
+    --clinic-secondary: #2e86c1;
+    --clinic-success: #1e8449;
+    --clinic-warning: #d68910;
+    --clinic-danger: #c0392b;
+    --clinic-light: #eaf2ff;
+    --clinic-radius: 8px;
+}
+
+/* ─── Cartes Stats Tableau de Bord ─── */
+.o_clinic_stat_card {
+    border-radius: var(--clinic-radius);
+    padding: 20px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.o_clinic_stat_card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.o_clinic_stat_card .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.o_clinic_stat_card .stat-label {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    margin-top: 4px;
+}
+
+.o_clinic_stat_card .stat-icon {
+    font-size: 2rem;
+    opacity: 0.3;
+}
+
+.o_clinic_card_blue    { background: linear-gradient(135deg, #1a5276, #2e86c1); }
+.o_clinic_card_green   { background: linear-gradient(135deg, #1e8449, #27ae60); }
+.o_clinic_card_orange  { background: linear-gradient(135deg, #d35400, #e67e22); }
+.o_clinic_card_red     { background: linear-gradient(135deg, #922b21, #c0392b); }
+.o_clinic_card_purple  { background: linear-gradient(135deg, #6c3483, #9b59b6); }
+.o_clinic_card_teal    { background: linear-gradient(135deg, #117a65, #1abc9c); }
+
+/* ─── Badge État Rendez-Vous ─── */
+.badge_rdv_draft       { background-color: #95a5a6 !important; }
+.badge_rdv_confirmed   { background-color: #2980b9 !important; }
+.badge_rdv_waiting     { background-color: #f39c12 !important; }
+.badge_rdv_in_progress { background-color: #16a085 !important; }
+.badge_rdv_done        { background-color: #27ae60 !important; }
+.badge_rdv_cancelled   { background-color: #c0392b !important; }
+.badge_rdv_no_show     { background-color: #7f8c8d !important; }
+
+/* ─── Formulaire Médecin / Patient ─── */
+.o_clinic_profile_header {
+    background: linear-gradient(135deg, var(--clinic-primary), var(--clinic-secondary));
+    color: white;
+    border-radius: var(--clinic-radius) var(--clinic-radius) 0 0;
+    padding: 24px;
+    margin: -15px -15px 15px -15px;
+}
+
+.o_clinic_profile_header h1 {
+    color: white !important;
+    font-size: 1.8rem;
+    margin-bottom: 4px;
+}
+
+.o_clinic_profile_header .specialty-badge {
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+/* ─── Planning ─── */
+.o_clinic_schedule_day {
+    border-left: 4px solid var(--clinic-primary);
+    padding-left: 12px;
+    margin-bottom: 8px;
+}
+
+.o_clinic_schedule_day.day-monday    { border-color: #3498db; }
+.o_clinic_schedule_day.day-tuesday   { border-color: #9b59b6; }
+.o_clinic_schedule_day.day-wednesday { border-color: #1abc9c; }
+.o_clinic_schedule_day.day-thursday  { border-color: #e67e22; }
+.o_clinic_schedule_day.day-friday    { border-color: #e74c3c; }
+.o_clinic_schedule_day.day-saturday  { border-color: #f1c40f; }
+.o_clinic_schedule_day.day-sunday    { border-color: #95a5a6; }
+
+/* ─── Urgent indicator ─── */
+.o_clinic_urgent_ribbon {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #c0392b;
+    color: white;
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 0 var(--clinic-radius) 0 var(--clinic-radius);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* ─── Kanban Médecin ─── */
+.o_kanban_record .o_clinic_doctor_card {
+    border-top: 3px solid var(--clinic-primary);
+}
+
+.o_clinic_availability_dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.o_clinic_availability_dot.available { background: #27ae60; }
+.o_clinic_availability_dot.busy      { background: #e74c3c; }
+.o_clinic_availability_dot.partial   { background: #f39c12; }
+
+/* ─── Vue Calendrier ─── */
+.fc-event {
+    border-radius: 4px !important;
+    border: none !important;
+    font-size: 0.8rem !important;
+    padding: 2px 6px !important;
+}
+
+/* ─── Boutons header formulaire ─── */
+.o_form_statusbar {
+    border-bottom: 2px solid var(--clinic-light) !important;
+}
+
+.o_statusbar_status .o_arrow_button.btn-primary {
+    background-color: var(--clinic-primary) !important;
+    border-color: var(--clinic-primary) !important;
+}
+
+/* ─── Animations ─── */
+@keyframes clinicPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(192, 57, 43, 0.4); }
+    50%       { box-shadow: 0 0 0 8px rgba(192, 57, 43, 0); }
+}
+
+.o_clinic_urgent_pulse {
+    animation: clinicPulse 1.5s infinite;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+    .o_clinic_stat_card .stat-number { font-size: 1.8rem; }
+    .o_clinic_stat_card { padding: 14px; }
+}

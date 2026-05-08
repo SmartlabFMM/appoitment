@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_appointment_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- En-tête -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <h2 style="color:#1a5276;">
+                                    <i class="fa fa-hospital-o"/> Fiche de Rendez-Vous Médical
+                                </h2>
+                                <h4 class="text-muted">Réf : <t t-esc="o.name"/></h4>
+                            </div>
+                            <div class="col-6 text-end">
+                                <span t-if="o.state == 'confirmed'" class="badge bg-success fs-6">Confirmé</span>
+                                <span t-if="o.state == 'done'" class="badge bg-primary fs-6">Terminé</span>
+                                <span t-if="o.state == 'cancelled'" class="badge bg-danger fs-6">Annulé</span>
+                                <span t-if="o.state == 'draft'" class="badge bg-secondary fs-6">Brouillon</span>
+                                <span t-if="o.state == 'waiting'" class="badge bg-warning fs-6">En Attente</span>
+                                <span t-if="o.state == 'in_progress'" class="badge bg-info fs-6">En Cours</span>
+                                <span t-if="o.priority == '1'" class="badge bg-warning ms-2">Urgent</span>
+                                <span t-if="o.priority == '2'" class="badge bg-danger ms-2">Très Urgent</span>
+                            </div>
+                        </div>
+
+                        <hr style="border-color:#1a5276;border-width:2px;"/>
+
+                        <!-- Informations Rendez-Vous -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 style="background:#1a5276;color:white;padding:8px 12px;border-radius:4px;">
+                                    <i class="fa fa-calendar"/> Détails du Rendez-Vous
+                                </h5>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td class="fw-bold" style="width:30%;background:#eaf2ff;">Date</td>
+                                        <td><t t-esc="o.appointment_date" t-options="{'widget': 'date'}"/></td>
+                                        <td class="fw-bold" style="background:#eaf2ff;">Heure</td>
+                                        <td><t t-esc="o.appointment_time_display"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold" style="background:#eaf2ff;">Durée</td>
+                                        <td><t t-esc="o.duration"/> minutes</td>
+                                        <td class="fw-bold" style="background:#eaf2ff;">Type</td>
+                                        <td>
+                                            <t t-if="o.appointment_type == 'first'">Première Visite</t>
+                                            <t t-if="o.appointment_type == 'followup'">Suivi</t>
+                                            <t t-if="o.appointment_type == 'emergency'">Urgence</t>
+                                            <t t-if="o.appointment_type == 'control'">Contrôle</t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold" style="background:#eaf2ff;">Spécialité</td>
+                                        <td><t t-esc="o.speciality_id.name"/></td>
+                                        <td class="fw-bold" style="background:#eaf2ff;">Médecin</td>
+                                        <td><t t-esc="o.doctor_id.display_name_full"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Informations Patient -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 style="background:#1a5276;color:white;padding:8px 12px;border-radius:4px;">
+                                    <i class="fa fa-user"/> Informations Patient
+                                </h5>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td class="fw-bold" style="width:30%;background:#eaf2ff;">Nom Complet</td>
+                                        <td><t t-esc="o.patient_id.name"/></td>
+                                        <td class="fw-bold" style="background:#eaf2ff;">N° Dossier</td>
+                                        <td><t t-esc="o.patient_id.ref"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold" style="background:#eaf2ff;">Téléphone</td>
+                                        <td><t t-esc="o.patient_id.phone"/></td>
+                                        <td class="fw-bold" style="background:#eaf2ff;">Âge</td>
+                                        <td><t t-esc="o.patient_id.age"/> ans</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold" style="background:#eaf2ff;">Groupe Sanguin</td>
+                                        <td><t t-esc="o.patient_id.blood_group or '-'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold" style="background:#eaf2ff;">Assurance</td>
+                                        <td colspan="3">
+                                            <t t-if="o.patient_id.insurance_type == 'cnss'">CNSS</t>
+                                            <t t-if="o.patient_id.insurance_type == 'cnrps'">CNRPS</t>
+                                            <t t-if="o.patient_id.insurance_type == 'private'">Assurance Privée</t>
+                                            <t t-if="o.patient_id.insurance_type == 'none'">Aucune</t>
+                                            <t t-if="o.patient_id.insurance_number">
+                                                — N° : <t t-esc="o.patient_id.insurance_number"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Motif -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 style="background:#1a5276;color:white;padding:8px 12px;border-radius:4px;">
+                                    <i class="fa fa-stethoscope"/> Motif et Symptômes
+                                </h5>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td class="fw-bold" style="width:20%;background:#eaf2ff;">Motif</td>
+                                        <td><t t-esc="o.reason"/></td>
+                                    </tr>
+                                    <tr t-if="o.symptoms">
+                                        <td class="fw-bold" style="background:#eaf2ff;">Symptômes</td>
+                                        <td><t t-esc="o.symptoms"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Diagnostic (si terminé) -->
+                        <t t-if="o.state == 'done' and o.diagnosis">
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5 style="background:#117a65;color:white;padding:8px 12px;border-radius:4px;">
+                                        <i class="fa fa-file-medical"/> Résultats de la Consultation
+                                    </h5>
+                                    <table class="table table-bordered">
+                                        <tr t-if="o.diagnosis">
+                                            <td class="fw-bold" style="width:20%;background:#e8f8f5;">Diagnostic</td>
+                                            <td><t t-esc="o.diagnosis"/></td>
+                                        </tr>
+                                        <tr t-if="o.prescription">
+                                            <td class="fw-bold" style="background:#e8f8f5;">Prescription</td>
+                                            <td><t t-esc="o.prescription"/></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Instructions patient -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div style="border:1px solid #1a5276;border-radius:6px;padding:12px;background:#f8f9fa;">
+                                    <p class="fw-bold mb-1"><i class="fa fa-info-circle text-primary"/> Instructions :</p>
+                                    <ul class="mb-0 small">
+                                        <li>Veuillez vous présenter <strong>15 minutes</strong> avant l'heure prévue.</li>
+                                        <li>Apportez votre <strong>carte d'identité</strong> et votre <strong>carte d'assurance</strong>.</li>
+                                        <li>En cas d'empêchement, contactez-nous <strong>24h à l'avance</strong>.</li>
+                                        <li>Apportez vos anciens <strong>examens et ordonnances</strong> si disponibles.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Signatures -->
+                        <div class="row mt-5">
+                            <div class="col-4 text-center">
+                                <div style="border-top:1px solid #333;padding-top:8px;margin-top:40px;">
+                                    <p class="small">Signature du Patient</p>
+                                </div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div style="border-top:1px solid #333;padding-top:8px;margin-top:40px;">
+                                    <p class="small">Cachet de l'Établissement</p>
+                                </div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div style="border-top:1px solid #333;padding-top:8px;margin-top:40px;">
+                                    <p class="small">Signature du Médecin</p>
+                                    <p class="small fw-bold"><t t-esc="o.doctor_id.display_name_full"/></p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

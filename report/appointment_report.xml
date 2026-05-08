@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Action Rapport Rendez-Vous -->
+    <record id="action_appointment_report" model="ir.actions.report">
+        <field name="name">Fiche Rendez-Vous</field>
+        <field name="model">medical.appointment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">clinic_appointment.report_appointment_template</field>
+        <field name="report_file">clinic_appointment.report_appointment_template</field>
+        <field name="binding_model_id" ref="model_medical_appointment"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+</odoo>
