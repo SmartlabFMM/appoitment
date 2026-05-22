@@ -53,7 +53,7 @@
                                     </tr>
                                     <tr>
                                         <td class="fw-bold" style="background:#eaf2ff;">Spécialité</td>
-                                        <td><t t-esc="o.speciality_id.name"/></td>
+                                        <td><t t-esc="o.speciality_id"/></td>
                                         <td class="fw-bold" style="background:#eaf2ff;">Médecin</td>
                                         <td><t t-esc="o.doctor_id.display_name_full"/></td>
                                     </tr>

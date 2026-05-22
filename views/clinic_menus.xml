@@ -4,7 +4,8 @@
     <!-- Menu Racine -->
     <menuitem id="menu_clinic_root"
               name="MedRdv"
-              sequence="10"/>
+              sequence="10"
+              web_icon = "clinic_appointment, static/description/icon.png"/>
 
     <!-- RENDEZ-VOUS -->
     <menuitem id="menu_appointments"
@@ -73,6 +74,14 @@
               action="action_schedule_doctor_own"
               sequence="2"
               groups="clinic_appointment.group_clinic_doctor"/>
+
+<!--    <menuitem id="menu_doctor_patients_own"-->
+<!--              name="Dossiers Patients"-->
+<!--              parent="menu_patients"-->
+<!--              action="action_medical_doctor_patient"-->
+<!--              sequence="1"-->
+<!--              groups="clinic_appointment.group_clinic_doctor"/>-->
+
 
     <!-- PATIENTS -->
     <menuitem id="menu_patients"

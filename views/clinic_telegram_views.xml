@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         PARAMÈTRES TELEGRAM — Vue dans Paramètres Odoo
+    ═══════════════════════════════════════════════════════════ -->
+    <record id="view_clinic_telegram_config_form" model="ir.ui.view">
+        <field name="name">clinic.telegram.config.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.action_general_configuration"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Clinique — Telegram" string="Clinique Telegram"
+                     data-key="clinic_appointment" groups="clinic_appointment.group_clinic_admin">
+                    <h2>Notifications Telegram</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="telegram_notifications_enabled"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="telegram_notifications_enabled" string="Activer les notifications Telegram"/>
+                                <div class="text-muted">
+                                    Envoie des notifications automatiques aux patients via Telegram.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="telegram_bot_token" string="Token du Bot Telegram"/>
+                                <field name="telegram_bot_token" class="o_light_label"
+                                       placeholder="123456789:ABCdefGHI..."/>
+                                <div class="text-muted">
+                                    Obtenez ce token depuis <a href="https://t.me/BotFather" target="_blank">@BotFather</a>.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="telegram_bot_username" string="Username du Bot"/>
+                                <field name="telegram_bot_username" class="o_light_label"
+                                       placeholder="MaCliniqueBot"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="telegram_no_show_delay" string="Délai avant marquage absent (min)"/>
+                                <field name="telegram_no_show_delay" class="o_light_label"/>
+                                <div class="text-muted">
+                                    Délai en minutes après l'heure du RDV avant de marquer le patient absent.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt16">
+                        <div class="col-12">
+                            <button name="action_test_telegram" type="object"
+                                    string="Tester la connexion Telegram" class="btn btn-secondary"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         PATIENT — Ajout onglet Telegram dans la fiche patient
+    ═══════════════════════════════════════════════════════════ -->
+    <record id="view_medical_patient_form_telegram" model="ir.ui.view">
+        <field name="name">medical.patient.form.telegram</field>
+        <field name="model">medical.patient</field>
+        <field name="inherit_id" ref="clinic_appointment.view_medical_patient_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Telegram" name="telegram">
+                    <group string="Notifications Telegram">
+                        <field name="telegram_notifications"/>
+                        <field name="telegram_chat_id"
+                               invisible="not telegram_notifications"
+                               placeholder="Ex: 123456789"/>
+                    </group>
+                    <div class="alert alert-info" role="alert"
+                         invisible="not telegram_notifications">
+                        <p>
+                            <strong>Comment obtenir le Chat ID du patient ?</strong>
+                        </p>
+                        <ol>
+                            <li>Le patient recherche le bot <strong>@<field name="telegram_bot_username_display" readonly="True" nolabel="True"/></strong> sur Telegram</li>
+                            <li>Il envoie la commande <code>/start</code></li>
+                            <li>Son Chat ID est affiché dans la réponse du bot</li>
+                            <li>Copiez ce Chat ID dans le champ ci-dessus</li>
+                        </ol>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         RDV — Affichage des champs de décalage dans le formulaire
+    ═══════════════════════════════════════════════════════════ -->
+    <record id="view_medical_appointment_form_shift" model="ir.ui.view">
+        <field name="name">medical.appointment.form.shift</field>
+        <field name="model">medical.appointment</field>
+        <field name="inherit_id" ref="clinic_appointment.view_medical_appointment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='tracking']" position="inside">
+                <separator string="Décalage Automatique"/>
+                <group>
+                    <field name="original_time" widget="float_time" readonly="True"
+                           invisible="shifted_count == 0"/>
+                    <field name="shifted_count" readonly="True"
+                           invisible="shifted_count == 0"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

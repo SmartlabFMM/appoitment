@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="1">
+
+    <!-- ═══════════════════════════════════════════════════════════
+         CRON JOB — Détection No-Show & Décalage automatique
+    ═══════════════════════════════════════════════════════════ -->
+    <record id="ir_cron_no_show_shift" model="ir.cron">
+        <field name="name">Clinique : Détection absences et décalage RDV</field>
+        <field name="model_id" ref="model_medical_appointment"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_handle_no_shows_and_shift()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="active">True</field>
+        <field name="priority">5</field>
+        <field name="user_id" ref="base.user_root"/>
+    </record>
+
+</data>
+</odoo>

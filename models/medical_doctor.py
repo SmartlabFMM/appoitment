@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from markupsafe import Markup
+
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 from datetime import datetime, time
@@ -151,6 +153,7 @@ class MedicalDoctor(models.Model):
             if vals.get('ref', 'Nouveau') == 'Nouveau':
                 vals['ref'] = self.env['ir.sequence'].next_by_code('medical.doctor') or 'Nouveau'
         doctors = super().create(vals_list)
+        # print(doctors)
         # Créer automatiquement un utilisateur Odoo pour chaque médecin
         for doctor in doctors:
             if not doctor.user_id:
@@ -204,6 +207,8 @@ class MedicalDoctor(models.Model):
 
         login = self._generate_login(self.name, self.email)
         temp_password = self._generate_temp_password()
+        # print(login)
+        # print(temp_password)
 
         user_vals = {
             'name': self.display_name_full or self.name,
@@ -213,7 +218,7 @@ class MedicalDoctor(models.Model):
             'phone': self.phone or False,
             'active': True,
             'share': False,  # Utilisateur interne
-            'groups_id': [],
+            'group_ids': [],
         }
 
         # Construire la liste des groupes
@@ -223,12 +228,13 @@ class MedicalDoctor(models.Model):
         if group_doctor:
             groups.append((4, group_doctor.id))
         if groups:
-            user_vals['groups_id'] = groups
+            user_vals['group_ids'] = groups
 
         try:
             user = self.env['res.users'].sudo().with_context(
                 no_reset_password=True
             ).create(user_vals)
+            print(user)
 
             # Définir le mot de passe temporaire
             user.sudo()._set_encrypted_password(
@@ -245,19 +251,35 @@ class MedicalDoctor(models.Model):
             )
 
             # Notifier dans le chatter avec les identifiants temporaires
-            self.message_post(
-                body=(
-                    f"<p>✅ <strong>Compte utilisateur créé automatiquement</strong></p>"
+            html_body = Markup(
+                f"<p>✅ <strong>Compte utilisateur créé automatiquement</strong></p>"
                     f"<ul>"
                     f"<li><strong>Login :</strong> {login}</li>"
                     f"<li><strong>Mot de passe temporaire :</strong> {temp_password}</li>"
                     f"</ul>"
                     f"<p>⚠️ Veuillez communiquer ces identifiants au médecin et lui demander "
                     f"de changer son mot de passe dès la première connexion.</p>"
-                ),
+            )
+            self.message_post(
+                body=html_body,
                 subject="Compte utilisateur créé",
                 message_type='notification',
             )
+            mail_values = {
+                'subject': f'Votre compte est créé!',
+                'body_html': f"""
+                                <p>Bonjour <strong>{self.name}</strong>,</p>
+                                <p>Votre compte utilisateur (Médecin) est créé :</p>
+                                <ul>
+                                    <li><strong>Login :</strong> {login}</li>
+                                    <li><strong>Mot de passe temporaire :</strong> {temp_password}</li>
+                                </ul>
+                                <p>Merci de changer votre mot de passe dès la première connexion.</p>
+                                """,
+                'email_to': self.email,
+                'email_from': 'arafettekaya@gmail.com',
+            }
+            self.env['mail.mail'].create(mail_values).send()
 
         except Exception as e:
             _logger.error(

@@ -151,4 +151,11 @@
         </field>
     </record>
 
+<!--    <record id="action_medical_doctor_patient" model="ir.actions.act_window">-->
+<!--        <field name="name">Dossiers Patients</field>-->
+<!--        <field name="res_model">medical.patient</field>-->
+<!--        <field name="view_mode">list,form</field>-->
+<!--        <field name="domain">[('doctor_id.patient_ids', '=', uid)]</field>-->
+<!--    </record>-->
+
 </odoo>

@@ -5,3 +5,6 @@ from . import medical_patient
 from . import medical_appointment
 from . import medical_schedule
 from . import ir_http
+from . import medical_appointment_cron
+from . import clinic_telegram_service
+from . import clinic_telegram_config

@@ -81,5 +81,182 @@
             <field name="average_duration">40</field>
             <field name="color">9</field>
         </record>
+
+        <record id="speciality_ent" model="medical.speciality">
+            <field name="name">ORL</field>
+            <field name="code">ORL</field>
+            <field name="description">Oto-rhino-laryngologie : oreilles, nez et gorge</field>
+            <field name="average_duration">25</field>
+            <field name="color">7</field>
+        </record>
+
+        <record id="speciality_psychiatry" model="medical.speciality">
+            <field name="name">Psychiatrie</field>
+            <field name="code">PSY</field>
+            <field name="description">Diagnostic et traitement des troubles mentaux</field>
+            <field name="average_duration">40</field>
+            <field name="color">9</field>
+        </record>
+
+        <record id="speciality_radiology" model="medical.speciality">
+            <field name="name">Radiologie</field>
+            <field name="code">RAD</field>
+            <field name="description">Imagerie médicale et diagnostic radiologique</field>
+            <field name="average_duration">20</field>
+            <field name="color">10</field>
+        </record>
+
+        <record id="speciality_urology" model="medical.speciality">
+            <field name="name">Urologie</field>
+            <field name="code">URO</field>
+            <field name="description">Traitement des maladies urinaires et génitales masculines</field>
+            <field name="average_duration">30</field>
+            <field name="color">11</field>
+        </record>
+
+        <record id="speciality_gastro" model="medical.speciality">
+            <field name="name">Gastro-entérologie</field>
+            <field name="code">GAST</field>
+            <field name="description">Maladies du système digestif</field>
+            <field name="average_duration">30</field>
+            <field name="color">1</field>
+        </record>
+
+        <record id="speciality_nephrology" model="medical.speciality">
+            <field name="name">Néphrologie</field>
+            <field name="code">NEPH</field>
+            <field name="description">Diagnostic et traitement des maladies des reins</field>
+            <field name="average_duration">30</field>
+            <field name="color">3</field>
+        </record>
+
+        <record id="speciality_oncology" model="medical.speciality">
+            <field name="name">Oncologie</field>
+            <field name="code">ONCO</field>
+            <field name="description">Traitement des cancers et tumeurs</field>
+            <field name="average_duration">40</field>
+            <field name="color">4</field>
+        </record>
+
+        <record id="speciality_rheumatology" model="medical.speciality">
+            <field name="name">Rhumatologie</field>
+            <field name="code">RHUM</field>
+            <field name="description">Maladies des articulations et du tissu conjonctif</field>
+            <field name="average_duration">30</field>
+            <field name="color">5</field>
+        </record>
+
+        <record id="speciality_surgery" model="medical.speciality">
+            <field name="name">Chirurgie Générale</field>
+            <field name="code">CHIR</field>
+            <field name="description">Interventions chirurgicales générales</field>
+            <field name="average_duration">45</field>
+            <field name="color">6</field>
+        </record>
+
+        <record id="speciality_anesthesia" model="medical.speciality">
+            <field name="name">Anesthésiologie</field>
+            <field name="code">ANES</field>
+            <field name="description">Gestion de l’anesthésie et de la douleur</field>
+            <field name="average_duration">20</field>
+            <field name="color">7</field>
+        </record>
+
+        <record id="speciality_internal" model="medical.speciality">
+            <field name="name">Médecine Interne</field>
+            <field name="code">MI</field>
+            <field name="description">Prise en charge globale des maladies internes</field>
+            <field name="average_duration">35</field>
+            <field name="color">8</field>
+        </record>
+
+        <record id="speciality_allergology" model="medical.speciality">
+            <field name="name">Allergologie</field>
+            <field name="code">ALL</field>
+            <field name="description">Diagnostic et traitement des allergies</field>
+            <field name="average_duration">25</field>
+            <field name="color">9</field>
+        </record>
+
+        <record id="speciality_angiology" model="medical.speciality">
+            <field name="name">Angiologie</field>
+            <field name="code">ANG</field>
+            <field name="description">Maladies des vaisseaux sanguins et lymphatiques</field>
+            <field name="average_duration">30</field>
+            <field name="color">10</field>
+        </record>
+
+        <record id="speciality_hematology" model="medical.speciality">
+            <field name="name">Hématologie</field>
+            <field name="code">HEMA</field>
+            <field name="description">Maladies du sang et des organes hématopoïétiques</field>
+            <field name="average_duration">35</field>
+            <field name="color">11</field>
+        </record>
+
+        <record id="speciality_infectiology" model="medical.speciality">
+            <field name="name">Infectiologie</field>
+            <field name="code">INF</field>
+            <field name="description">Traitement des maladies infectieuses</field>
+            <field name="average_duration">30</field>
+            <field name="color">12</field>
+        </record>
+
+        <record id="speciality_neonatology" model="medical.speciality">
+            <field name="name">Néonatologie</field>
+            <field name="code">NEO</field>
+            <field name="description">Soins médicaux des nouveau-nés</field>
+            <field name="average_duration">35</field>
+            <field name="color">4</field>
+        </record>
+
+        <record id="speciality_nutrition" model="medical.speciality">
+            <field name="name">Nutrition</field>
+            <field name="code">NUT</field>
+            <field name="description">Conseils et suivi nutritionnel</field>
+            <field name="average_duration">25</field>
+            <field name="color">5</field>
+        </record>
+
+        <record id="speciality_dentistry" model="medical.speciality">
+            <field name="name">Odontologie</field>
+            <field name="code">DENT</field>
+            <field name="description">Soins dentaires et bucco-dentaires</field>
+            <field name="average_duration">30</field>
+            <field name="color">7</field>
+        </record>
+
+        <record id="speciality_rehabilitation" model="medical.speciality">
+            <field name="name">Médecine Physique et Réadaptation</field>
+            <field name="code">MPR</field>
+            <field name="description">Rééducation fonctionnelle et réadaptation physique</field>
+            <field name="average_duration">40</field>
+            <field name="color">8</field>
+        </record>
+
+        <record id="speciality_proctology" model="medical.speciality">
+            <field name="name">Proctologie</field>
+            <field name="code">PROC</field>
+            <field name="description">Traitement des maladies du rectum et de l’anus</field>
+            <field name="average_duration">25</field>
+            <field name="color">9</field>
+        </record>
+
+        <record id="speciality_toxicology" model="medical.speciality">
+            <field name="name">Toxicologie</field>
+            <field name="code">TOX</field>
+            <field name="description">Étude et traitement des intoxications</field>
+            <field name="average_duration">30</field>
+            <field name="color">11</field>
+        </record>
+
+        <record id="speciality_traumatology" model="medical.speciality">
+            <field name="name">Traumatologie</field>
+            <field name="code">TRAU</field>
+            <field name="description">Prise en charge des traumatismes et blessures</field>
+            <field name="average_duration">35</field>
+            <field name="color">12</field>
+        </record>
+
     </data>
 </odoo>

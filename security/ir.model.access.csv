@@ -5,7 +5,7 @@ access_speciality_doctor,Spécialité Médecin,model_medical_speciality,clinic_a
 access_speciality_patient,Spécialité Patient,model_medical_speciality,clinic_appointment.group_clinic_patient,1,0,0,0
 access_doctor_admin,Médecin Admin,model_medical_doctor,clinic_appointment.group_clinic_admin,1,1,1,1
 access_doctor_secretary,Médecin Secrétaire,model_medical_doctor,clinic_appointment.group_clinic_secretary,1,1,0,0
-access_doctor_doctor,Médecin Médecin,model_medical_doctor,clinic_appointment.group_clinic_doctor,1,0,0,0
+access_doctor_doctor,Médecin Médecin,model_medical_doctor,clinic_appointment.group_clinic_doctor,1,1,0,0
 access_doctor_patient,Médecin Patient,model_medical_doctor,clinic_appointment.group_clinic_patient,1,0,0,0
 access_patient_admin,Patient Admin,model_medical_patient,clinic_appointment.group_clinic_admin,1,1,1,1
 access_patient_secretary,Patient Secrétaire,model_medical_patient,clinic_appointment.group_clinic_secretary,1,1,1,0
