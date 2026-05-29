@@ -3,7 +3,6 @@ from markupsafe import Markup
 
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
-from datetime import datetime, time
 import logging
 import secrets
 import string
@@ -17,7 +16,7 @@ class MedicalDoctor(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'name asc'
 
-    # Informations personnelles
+    # Personal information fields
     name = fields.Char(
         string='Nom Complet',
         required=True,
@@ -39,20 +38,27 @@ class MedicalDoctor(models.Model):
         ('pr', 'Pr.'),
     ], string='Titre', default='dr')
 
-    display_name_full = fields.Char(
-        string='Nom Affiché',
-        compute='_compute_display_name_full',
-        store=True,
-    )
-
-    phone = fields.Char(string='Téléphone', tracking=True)
-    mobile = fields.Char(string='Mobile')
+    phone = fields.Char(string='Téléphone', size=8, tracking=True)
+    mobile = fields.Char(string='Mobile', size=8)
     email = fields.Char(string='Email', tracking=True)
     image = fields.Binary(string='Photo', attachment=True)
     birth_date = fields.Date(string='Date de Naissance')
     address = fields.Text(string='Adresse')
 
-    # Informations professionnelles
+    # Professional information fields
+    license_number = fields.Char(
+        string='Numéro de Licence',
+        tracking=True,
+    )
+    experience_years = fields.Integer(
+        string='Années d\'Expérience'
+    )
+    notes = fields.Text(string='Notes')
+
+    # Archiving Field
+    active = fields.Boolean(string='Actif', default=True, tracking=True)
+
+    # Speciality Relation
     speciality_id = fields.Many2one(
         'medical.speciality',
         string='Spécialité',
@@ -60,47 +66,42 @@ class MedicalDoctor(models.Model):
         tracking=True,
         ondelete='restrict',
     )
-    license_number = fields.Char(
-        string='Numéro de Licence',
-        tracking=True,
-    )
-    experience_years = fields.Integer(
-        string='Années d\'Expérience',
-        default=0,
-    )
-    consultation_fee = fields.Float(
-        string='Honoraires de Consultation (DT)',
-        digits=(10, 3),
-    )
-    # consultation_duration = fields.Integer(
-    #     string='Durée de Consultation (min)',
-    #     default=30,
-    #     help='Durée par défaut d\'une consultation pour ce médecin',
-    # )
 
-    # Lien utilisateur
+    # res.users relation
     user_id = fields.Many2one(
         'res.users',
         string='Compte Utilisateur',
         tracking=True,
         domain="[('share', '=', False)]",
+        ondelete='set null'
     )
 
-    active = fields.Boolean(string='Actif', default=True, tracking=True)
-    notes = fields.Text(string='Notes')
-
-    # Disponibilités
+    # Schedule Relation
     schedule_ids = fields.One2many(
         'medical.schedule',
         'doctor_id',
         string='Plannings',
     )
 
-    # Rendez-vous
+    # Appointments Relation
     appointment_ids = fields.One2many(
         'medical.appointment',
         'doctor_id',
         string='Rendez-Vous',
+    )
+
+    # Computed Fields
+    display_name_full = fields.Char(
+        string='Nom Affiché',
+        compute='_compute_display_name_full',
+        store=True,
+    )
+    consultation_duration = fields.Integer(
+        string='Durée de Consultation (min)',
+        help='Durée par défaut d\'une consultation pour ce médecin',
+        compute="_compute_consultation_duration",
+        store=True,
+        readonly=False
     )
     appointment_count = fields.Integer(
         string='Total Rendez-Vous',
@@ -111,21 +112,18 @@ class MedicalDoctor(models.Model):
         compute='_compute_today_appointment_count',
     )
 
-    # ------------------------------------------------
-    # Computed
-    consultation_duration = fields.Integer(
-        related='speciality_id.average_duration',
-        string='Durée de Consultation (min)',
-        default=30,
-        help='Durée par défaut d\'une consultation pour ce médecin',
-    )
-    # ------------------------------------------------
 
+    # Computed Methods
     @api.depends('title', 'name')
     def _compute_display_name_full(self):
         for rec in self:
             prefix = dict(self._fields['title'].selection).get(rec.title, '')
             rec.display_name_full = f"{prefix} {rec.name}" if prefix else rec.name
+
+    @api.depends('speciality_id')
+    def _compute_consultation_duration(self):
+        for record in self:
+            record.consultation_duration = record.speciality_id.average_duration
 
     def _compute_appointment_count(self):
         for rec in self:
@@ -143,40 +141,48 @@ class MedicalDoctor(models.Model):
                 ('state', 'not in', ['cancelled']),
             ])
 
-    # ------------------------------------------------
-    # ORM
-    # ------------------------------------------------
 
+
+    # Overriding create method to set the reference field
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get('ref', 'Nouveau') == 'Nouveau':
                 vals['ref'] = self.env['ir.sequence'].next_by_code('medical.doctor') or 'Nouveau'
         doctors = super().create(vals_list)
-        # print(doctors)
-        # Créer automatiquement un utilisateur Odoo pour chaque médecin
-        for doctor in doctors:
-            if not doctor.user_id:
-                doctor._create_doctor_user()
+
         return doctors
 
-    # ------------------------------------------------
-    # Création automatique de l'utilisateur
-    # ------------------------------------------------
+    # Overriding unlink method to delete the user account when deleting the record
+    def unlink(self):
+        users_to_delete = self.env['res.users']
+        for record in self:
+            if record.user_id:
+                # Security protection: Never delete the system administrator or the system bot
+                if record.user_id.id not in (self.env.ref('base.user_admin').id, self.env.ref('base.user_root').id):
+                    users_to_delete |= record.user_id
+        res = super().unlink()
+
+        if users_to_delete:
+            # S'assurer que les utilisateurs collectés n'ont plus de lien résiduel actif
+            users_to_delete.unlink()
+
+        return res
+
 
     def _generate_login(self, name, email=None):
         """Génère un login unique pour le médecin."""
         if email:
             base_login = email.lower().strip()
         else:
-            # Construire un login à partir du nom : "Dr Ahmed Ben Ali" → "ahmed.benali"
+            # Build a login from the name : "Dr Ahmed Ben Ali" → "ahmed.benali"
             parts = name.lower().strip().split()
-            # Ignorer les titres éventuels
+            # Ignore any potential titles
             ignore = {'dr.', 'pr.', 'dr', 'pr'}
             parts = [p for p in parts if p not in ignore]
             base_login = '.'.join(parts) if parts else 'medecin'
 
-        # S'assurer de l'unicité
+        # Ensuring uniqueness
         login = base_login
         counter = 1
         while self.env['res.users'].sudo().search_count([('login', '=', login)]):
@@ -195,14 +201,14 @@ class MedicalDoctor(models.Model):
         le groupe 'Clinic / Médecin' pour qu'il accède à son planning
         et ses rendez-vous uniquement.
         """
-        self.ensure_one()
+        self.ensure_one() # Ensure that we are working with a single record
 
-        # Récupérer le groupe médecin
+        # Retrieve the doctor group
         group_doctor = self.env.ref(
             'clinic_appointment.group_clinic_doctor',
             raise_if_not_found=False,
         )
-        # Récupérer le groupe de base (Utilisateur interne)
+        # Retrieve the base group (Internal User)
         group_internal = self.env.ref('base.group_user', raise_if_not_found=False)
 
         login = self._generate_login(self.name, self.email)
@@ -217,11 +223,11 @@ class MedicalDoctor(models.Model):
             'image_1920': self.image or False,
             'phone': self.phone or False,
             'active': True,
-            'share': False,  # Utilisateur interne
+            'share': False,  # Internal user
             'group_ids': [],
         }
 
-        # Construire la liste des groupes
+        # Build the list of groups
         groups = []
         if group_internal:
             groups.append((4, group_internal.id))
@@ -236,13 +242,13 @@ class MedicalDoctor(models.Model):
             ).create(user_vals)
             print(user)
 
-            # Définir le mot de passe temporaire
+            # Set a temporary password
             user.sudo()._set_encrypted_password(
                 user.id,
                 self.env['res.users']._crypt_context().hash(temp_password)
             )
 
-            # Lier l'utilisateur au médecin
+            # Link the user to doctor
             self.sudo().write({'user_id': user.id})
 
             _logger.info(
@@ -250,9 +256,9 @@ class MedicalDoctor(models.Model):
                 self.name, login,
             )
 
-            # Notifier dans le chatter avec les identifiants temporaires
+            # Notify in the chatter using temporary credentials
             html_body = Markup(
-                f"<p>✅ <strong>Compte utilisateur créé automatiquement</strong></p>"
+                f"<p>✅ <strong>Compte utilisateur créé</strong></p>"
                     f"<ul>"
                     f"<li><strong>Login :</strong> {login}</li>"
                     f"<li><strong>Mot de passe temporaire :</strong> {temp_password}</li>"
@@ -265,77 +271,51 @@ class MedicalDoctor(models.Model):
                 subject="Compte utilisateur créé",
                 message_type='notification',
             )
-            mail_values = {
-                'subject': f'Votre compte est créé!',
-                'body_html': f"""
-                                <p>Bonjour <strong>{self.name}</strong>,</p>
-                                <p>Votre compte utilisateur (Médecin) est créé :</p>
-                                <ul>
-                                    <li><strong>Login :</strong> {login}</li>
-                                    <li><strong>Mot de passe temporaire :</strong> {temp_password}</li>
-                                </ul>
-                                <p>Merci de changer votre mot de passe dès la première connexion.</p>
-                                """,
-                'email_to': self.email,
-                'email_from': 'arafettekaya@gmail.com',
-            }
-            self.env['mail.mail'].create(mail_values).send()
+
+            if self.email :                # Sending email to the doctor with the temporary credentials
+                mail_values = {
+                    'subject': f'Votre compte est créé!',
+                    'body_html': f"""
+                                    <p>Bonjour <strong>{self.name}</strong>,</p>
+                                    <p>Votre compte utilisateur (Médecin) est créé :</p>
+                                    <ul>
+                                        <li><strong>Login :</strong> {login}</li>
+                                        <li><strong>Mot de passe temporaire :</strong> {temp_password}</li>
+                                    </ul>
+                                    <p>Merci de changer votre mot de passe dès la première connexion.</p>
+                                    """,
+                    'email_to': self.email,
+                    'email_from': 'arafettekaya@gmail.com',
+                }
+                self.env['mail.mail'].create(mail_values).send()
 
         except Exception as e:
             _logger.error(
                 "Erreur lors de la création de l'utilisateur pour le médecin %s : %s",
                 self.name, str(e),
             )
-            # Ne pas bloquer la création du médecin
-            self.message_post(
-                body=(
-                    f"<p>⚠️ <strong>Impossible de créer le compte utilisateur automatiquement.</strong></p>"
+            # Do not block the creation of the doctor
+            html_body = Markup(
+                f"<p>⚠️ <strong>Impossible de créer le compte utilisateur.</strong></p>"
                     f"<p>Erreur : {str(e)}</p>"
-                    f"<p>Vous pouvez créer le compte manuellement via le champ "
-                    f"<em>Compte Utilisateur</em>.</p>"
-                ),
+            )
+            self.message_post(
+                body=html_body,
                 message_type='notification',
             )
 
     # ------------------------------------------------
-    # Action manuelle (bouton) : recréer / réinitialiser l'utilisateur
-    # ------------------------------------------------
-
-    def action_create_user(self):
-        """
-        Bouton dans la fiche médecin pour créer/recréer manuellement l'utilisateur.
-        Utile si la création automatique a échoué.
-        """
-        for rec in self:
-            if rec.user_id:
-                raise ValidationError(
-                    f"Ce médecin possède déjà un compte utilisateur : {rec.user_id.login}\n"
-                    f"Archivez-le d'abord si vous souhaitez en créer un nouveau."
-                )
-            rec._create_doctor_user()
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Succès',
-                'message': 'Le compte utilisateur a été créé avec succès.',
-                'type': 'success',
-                'sticky': False,
-            },
-        }
-
-    # ------------------------------------------------
     # Constraintes
     # ------------------------------------------------
-
     @api.constrains('consultation_duration')
     def _check_duration(self):
         for rec in self:
             if rec.consultation_duration <= 0:
                 raise ValidationError("La durée de consultation doit être supérieure à 0.")
 
+
     # ------------------------------------------------
-    # Actions de navigation
+    # Navigation actions
     # ------------------------------------------------
 
     def action_view_appointments(self):
@@ -357,6 +337,31 @@ class MedicalDoctor(models.Model):
             'domain': [('doctor_id', '=', self.id)],
             'context': {'default_doctor_id': self.id},
         }
+
+    def action_create_user(self):
+        """
+        Bouton dans la fiche médecin pour créer/recréer manuellement l'utilisateur.
+        Utile si la création automatique a échoué.
+        """
+        for rec in self:
+            if rec.user_id:
+                raise ValidationError(
+                    f"Ce médecin possède déjà un compte utilisateur : {rec.user_id.login}\n"
+                    f"Archivez-le d'abord si vous souhaitez en créer un nouveau."
+                )
+            rec._create_doctor_user()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Succès',
+                'message': 'Le compte utilisateur a été créé avec succès.',
+                'type': 'success',
+                'sticky': False,
+                'next': {'type': 'ir.actions.client', 'tag': 'reload'},
+            },
+        }
+
 
     def get_available_slots(self, date):
         """Retourne les créneaux disponibles pour un médecin à une date donnée"""

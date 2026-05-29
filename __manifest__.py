@@ -35,6 +35,7 @@
         # Data
         'data/clinic_sequence.xml',
         'data/clinic_data.xml',
+        'data/clinic_cron_data.xml',
 
         # Views - Speciality
         'views/medical_speciality_views.xml',

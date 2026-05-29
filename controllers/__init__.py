@@ -1,6 +1,3 @@
 # -*- coding: utf-8 -*-
-from . import auth
-from . import specialities
-from . import doctors
-from . import appointments
-from . import patients
+from . import portal_controller
+from . import website_form_controller

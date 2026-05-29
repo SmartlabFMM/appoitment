@@ -10,7 +10,7 @@ from odoo import models, api
 
 _logger = logging.getLogger(__name__)
 
-TELEGRAM_API = 'https://api.telegram.org/bot{token}/{method}'
+TELEGRAM_API = 'https://api.telegram.org/bot{8731775582:AAEshU3VvoznBcc5svvkUGjmRoaNIzpfB2k}/{method}'
 
 
 class ClinicTelegramService(models.AbstractModel):

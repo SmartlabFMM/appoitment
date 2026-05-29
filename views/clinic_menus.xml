@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Menu Racine -->
+    <!-- Root Menu -->
     <menuitem id="menu_clinic_root"
               name="MedRdv"
               sequence="10"
               web_icon = "clinic_appointment, static/description/icon.png"/>
 
-    <!-- RENDEZ-VOUS -->
+    <!-- APPOINTMENTS -->
     <menuitem id="menu_appointments"
               name="Rendez-Vous"
               parent="menu_clinic_root"
@@ -41,7 +41,7 @@
               sequence="4"
               groups="clinic_appointment.group_clinic_patient"/>
 
-    <!-- MEDECINS -->
+    <!-- DOCTORS -->
     <menuitem id="menu_doctors"
               name="Medecins"
               parent="menu_clinic_root"
@@ -64,7 +64,7 @@
     <menuitem id="menu_doctor_profile"
               name="Mon Profil"
               parent="menu_doctors"
-              action="action_medical_doctor_own"
+              action="action_medical_doctor_own_profile"
               sequence="1"
               groups="clinic_appointment.group_clinic_doctor"/>
 
@@ -94,7 +94,7 @@
               parent="menu_patients"
               action="action_medical_patient"
               sequence="1"
-              groups="clinic_appointment.group_clinic_admin,clinic_appointment.group_clinic_secretary,clinic_appointment.group_clinic_doctor"/>
+              groups="clinic_appointment.group_clinic_admin,clinic_appointment.group_clinic_secretary"/>
 
     <!-- ADMINISTRATION -->
     <menuitem id="menu_admin"

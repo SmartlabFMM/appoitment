@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Vue Liste -->
+    <!-- List View -->
     <record id="view_medical_doctor_list" model="ir.ui.view">
         <field name="name">medical.doctor.list</field>
         <field name="model">medical.doctor</field>
         <field name="arch" type="xml">
-            <list string="Médecins" decoration-muted="not active">
+            <list decoration-muted="not active">
                 <field name="ref"/>
                 <field name="display_name_full" string="Nom"/>
                 <field name="speciality_id"/>
@@ -19,12 +19,12 @@
         </field>
     </record>
 
-    <!-- Vue Formulaire -->
+    <!-- Form View -->
     <record id="view_medical_doctor_form" model="ir.ui.view">
         <field name="name">medical.doctor.form</field>
         <field name="model">medical.doctor</field>
         <field name="arch" type="xml">
-            <form string="Fiche Médecin">
+            <form>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_view_appointments" type="object"
@@ -37,7 +37,7 @@
                                 <span class="o_stat_value">Planning</span>
                             </div>
                         </button>
-                        <!-- Bouton : créer manuellement le compte si la création auto a échoué -->
+                        <!-- Button: Create user account-->
                         <button name="action_create_user" type="object"
                                 class="oe_stat_button" icon="fa-user-plus"
                                 invisible="user_id != False"
@@ -47,7 +47,7 @@
                                 <span class="o_stat_text">Utilisateur</span>
                             </div>
                         </button>
-                        <!-- Indicateur : compte déjà lié -->
+                        <!-- Indicator: account already linked -->
                         <button type="object" name="action_view_appointments"
                                 class="oe_stat_button" icon="fa-user-check"
                                 invisible="user_id == False">
@@ -73,19 +73,19 @@
                             <field name="speciality_id" required="True"/>
                             <field name="license_number"/>
                             <field name="experience_years"/>
-                            <field name="consultation_duration" readonly="True"/>
-                            <field name="consultation_fee"/>
+                            <field name="consultation_duration"/>
                         </group>
                         <group string="Informations Personnelles">
                             <field name="gender"/>
                             <field name="birth_date"/>
                             <field name="phone"/>
+                            <field name="mobile"/>
                             <field name="email"/>
                         </group>
                     </group>
                     <group>
                         <group string="Compte et Acces">
-                            <field name="user_id"/>
+                            <field name="user_id" readonly="True"/>
                             <field name="active"/>
                         </group>
                         <group string="Localisation">
@@ -124,17 +124,17 @@
                         </page>
                     </notebook>
                 </sheet>
-                <chatter/>
+                <chatter groups="clinic_appointment.group_clinic_admin,clinic_appointment.group_clinic_secretary"/>
             </form>
         </field>
     </record>
 
-    <!-- Vue Recherche -->
+    <!-- Search View -->
     <record id="view_medical_doctor_search" model="ir.ui.view">
         <field name="name">medical.doctor.search</field>
         <field name="model">medical.doctor</field>
         <field name="arch" type="xml">
-            <search string="Rechercher un Medecin">
+            <search>
                 <field name="name" string="Nom"/>
                 <field name="speciality_id" string="Specialite"/>
                 <field name="ref" string="Reference"/>
@@ -146,7 +146,7 @@
         </field>
     </record>
 
-    <!-- Action principale -->
+    <!-- Window Action -->
     <record id="action_medical_doctor" model="ir.actions.act_window">
         <field name="name">Medecins</field>
         <field name="res_model">medical.doctor</field>
@@ -160,12 +160,30 @@
         </field>
     </record>
 
-    <!-- Action pour le medecin connecte -->
-    <record id="action_medical_doctor_own" model="ir.actions.act_window">
+    <!-- Server Action for doctor's profile -->
+    <record id="action_medical_doctor_own_profile" model="ir.actions.server">
         <field name="name">Mon Profil</field>
-        <field name="res_model">medical.doctor</field>
-        <field name="view_mode">form</field>
-        <field name="domain">[('user_id', '=', uid)]</field>
+        <field name="model_id" ref="model_medical_doctor"/>
+        <field name="state">code</field>
+        <field name="code">
+doctor = env['medical.doctor'].search([('user_id', '=', env.uid)], limit=1)
+if doctor:
+    action = {
+        'type': 'ir.actions.act_window',
+        'name': 'Mon Profil',
+        'res_model': 'medical.doctor',
+        'view_mode': 'form',
+        'res_id': doctor.id,
+        'target': 'current',
+    }
+else:
+    action = {
+        'type': 'ir.actions.act_window',
+        'name': 'Créer mon Profil',
+        'res_model': 'medical.doctor',
+        'view_mode': 'form',
+        'target': 'current',
+    }
+        </field>
     </record>
-
 </odoo>

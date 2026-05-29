@@ -11,6 +11,7 @@
         <field name="arch" type="xml">
             <list string="Patients" decoration-muted="not active">
                 <field name="ref"/>
+                <field name="cin"/>
                 <field name="name"/>
                 <field name="gender"/>
                 <field name="age" string="Âge"/>
@@ -55,6 +56,7 @@
                     </div>
                     <group>
                         <group string="Informations Personnelles">
+                            <field name="cin"/>
                             <field name="gender"/>
                             <field name="birth_date"/>
                             <field name="age" readonly="True"/>
@@ -125,6 +127,7 @@
         <field name="model">medical.patient</field>
         <field name="arch" type="xml">
             <search string="Rechercher un Patient">
+                <field name="cin" string="CIN"/>
                 <field name="name" string="Nom"/>
                 <field name="ref" string="N Dossier"/>
                 <field name="phone" string="Telephone"/>

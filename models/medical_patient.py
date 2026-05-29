@@ -9,10 +9,12 @@ class MedicalPatient(models.Model):
     _description = 'Patient'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'name asc'
+    _rec_name = 'cin'
 
     # Informations personnelles
     name = fields.Char(string='Nom Complet', required=True, tracking=True)
     ref  = fields.Char(string='Numéro Dossier', readonly=True, copy=False, default='Nouveau')
+    cin = fields.Char(string='CIN', size=8, readonly=True, tracking=True)
 
     gender = fields.Selection([('male', 'Homme'), ('female', 'Femme')], string='Genre', tracking=True)
 
@@ -60,6 +62,8 @@ class MedicalPatient(models.Model):
     active        = fields.Boolean(string='Actif', default=True, tracking=True)
     password_hash = fields.Char(string='Mot de Passe Web', copy=False, groups='base.group_system')
     notes         = fields.Text(string='Notes Complémentaires')
+
+    _cin_unique = models.Constraint('UNIQUE(cin)', 'Le CIN du patient doit être unique!')
 
     # ── Telegram ─────────────────────────────────────────────────────────────
     telegram_chat_id = fields.Char(
